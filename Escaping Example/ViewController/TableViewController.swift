@@ -8,30 +8,10 @@
 import UIKit
 
 class TableViewController: UITableViewController {
+    
     var movies = [Movie]()
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        MovieAPI.getMovie { (isSuccess, movies) in
-          if isSuccess {
-            self.movies = movies
-            print("Completion is Success")
-            self.tableView.reloadData()
-          }
-        }
-//        MovieAPI.getMovie2 { (isSuccess, movies) in
-//          if isSuccess {
-//            self.movies = movies
-//            self.tableView.reloadData()
-//          }
-//        }
-        print("Something to do1")
-        print("Something to do2")
-
-    }
-
+    
     // MARK: - Table view data source
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
        
         return movies.count
@@ -43,6 +23,34 @@ class TableViewController: UITableViewController {
         cell.title.text = movies[indexPath.row].title
         return cell
     }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(getMovie), name: NSNotification.Name("getMovie"), object: nil)
+        MovieAPI.getMovieNoCompletion()
+                
+        print("Something to do1")
+        self.title = "영화목록"
+        print("Something to do2")
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(tapLeftButton))
+
+    }
+    
+    @objc func getMovie(_ notification:NSNotification) {
+        movies = notification.userInfo?["movies"] as! [Movie]
+        tableView.reloadData()
+    }
+
+    
+    
+    @objc func tapLeftButton(){
+        print("DEBUG:tap Edit Button")
+    }
+
 
 
 }
+
+
